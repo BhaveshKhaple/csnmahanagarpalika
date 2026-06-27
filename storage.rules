@@ -1,0 +1,74 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidDocumentFile() {
+      return request.resource.contentType.matches('image/.*') ||
+             request.resource.contentType == 'application/pdf';
+    }
+    
+    function isValidVideoFile() {
+      return request.resource.contentType.matches('video/.*');
+    }
+    
+    function isUnder10MB() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+    
+    function isUnder50MB() {
+      return request.resource.size < 50 * 1024 * 1024;
+    }
+    
+    // User profile photos
+    match /users/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && isValidImageFile() && isUnder10MB();
+    }
+    
+    // Complaint images and videos
+    match /complaints/{userId}/{complaintId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && 
+                     (isValidImageFile() || isValidVideoFile()) && 
+                     isUnder50MB();
+    }
+    
+    // Application documents
+    match /applications/{userId}/{applicationId}/{allPaths=**} {
+      allow read: if isOwner(userId) || 
+                     request.auth.token.role in ['officer', 'admin', 'superadmin'];
+      allow write: if isOwner(userId) && isValidDocumentFile() && isUnder10MB();
+    }
+    
+    // Property documents
+    match /properties/{userId}/{propertyId}/{allPaths=**} {
+      allow read: if isOwner(userId) || 
+                     request.auth.token.role in ['officer', 'admin', 'superadmin'];
+      allow write: if isOwner(userId) && isValidDocumentFile() && isUnder10MB();
+    }
+    
+    // Public files (news images, official photos, etc.)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth.token.role in ['admin', 'superadmin'];
+    }
+    
+    // Temporary uploads (auto-deleted after 24 hours)
+    match /temp/{userId}/{allPaths=**} {
+      allow read, write: if isOwner(userId) && isUnder50MB();
+    }
+  }
+}

@@ -1,0 +1,125 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'superadmin'];
+    }
+    
+    function isOfficer() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['officer', 'admin', 'superadmin'];
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Complaints collection
+    match /complaints/{complaintId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isOfficer());
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isOfficer() || (isOwner(resource.data.userId) && resource.data.status == 'submitted');
+      allow delete: if isAdmin();
+    }
+    
+    // Applications collection (Certificates & Licenses)
+    match /applications/{applicationId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isOfficer());
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isOfficer() || (isOwner(resource.data.userId) && resource.data.status == 'draft');
+      allow delete: if isAdmin();
+    }
+    
+    // Bills collection
+    match /bills/{billId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isOfficer());
+      allow create: if isOfficer();
+      allow update: if isOfficer();
+      allow delete: if isAdmin();
+    }
+    
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isOfficer());
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isOfficer();
+      allow delete: if isAdmin();
+    }
+    
+    // Properties collection
+    match /properties/{propertyId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.ownerId == request.auth.uid || isOfficer());
+      allow create: if isOfficer();
+      allow update: if isOfficer();
+      allow delete: if isAdmin();
+    }
+    
+    // Water Connections collection
+    match /waterConnections/{connectionId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.ownerId == request.auth.uid || isOfficer());
+      allow create: if isOfficer();
+      allow update: if isOfficer();
+      allow delete: if isAdmin();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isOfficer();
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // News collection (public read)
+    match /news/{newsId} {
+      allow read: if true;
+      allow write: if isOfficer();
+    }
+    
+    // Officials collection (public read)
+    match /officials/{officialId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Departments collection (public read)
+    match /departments/{departmentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Audit logs collection
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+  }
+}
