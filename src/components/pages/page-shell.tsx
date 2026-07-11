@@ -11,7 +11,7 @@ interface PageShellProps {
 
 export default function PageShell({ eyebrow, title, description, children }: PageShellProps) {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <section className="py-16 md:py-20">
         <div className="container-custom">
           <div className="max-w-3xl mb-10">
@@ -27,6 +27,6 @@ export default function PageShell({ eyebrow, title, description, children }: Pag
           </Card>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
