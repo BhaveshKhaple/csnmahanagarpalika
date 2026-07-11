@@ -1,0 +1,116 @@
+{
+  "common": {
+    "login": "Citizen Login",
+    "logout": "Logout",
+    "guest_complaint": "File Complaint (Guest)",
+    "file_complaint": "File Complaint",
+    "track_complaint": "Track Complaint",
+    "view_all": "View All",
+    "more": "More",
+    "home": "Home",
+    "save": "Save",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
+    "print": "Print / Save",
+    "share": "Share",
+    "loading": "Loading...",
+    "required": "Required",
+    "error": "Error",
+    "success": "Success"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Citizen Services",
+    "about": "About CSMC",
+    "tenders": "Tenders & Recruitment",
+    "documents": "Documents & Info",
+    "contact": "Contact",
+    "helpline": "Helpline",
+    "search": "Search Service",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "home": {
+    "hero": {
+      "title": "Chhatrapati Sambhajinagar Municipal Corporation",
+      "subtitle": "Smart Citizen Services Portal"
+    },
+    "about": {
+      "tag": "About Us",
+      "title": "About Our Municipal Corporation",
+      "subtitle": "Historic Urban Institution named after Chhatrapati Sambhaji Maharaj",
+      "est_label": "Established Year",
+      "desc_p1": "Chhatrapati Sambhajinagar Municipal Corporation (CSMC) is the administrative body responsible for the administration and development of Chhatrapati Sambhajinagar, a city historically and culturally rich in Maharashtra.",
+      "desc_p2": "Named in honor of Chhatrapati Sambhaji Maharaj, the city is known for its unique blend of heritage, education, industry, and modernity.",
+      "read_more": "Read More",
+      "total_area": "Total Area",
+      "population": "Population",
+      "population_val": "12 Lakh+",
+      "wards": "Wards",
+      "online_services": "Online Services",
+      "about_csmc": "About Corporation",
+      "about_desc": "Municipal history and background",
+      "mission": "Vision & Mission",
+      "mission_desc": "Smart City vision and objective",
+      "officials": "Elected Officials",
+      "officials_desc": "Mayor, Commissioner, and officials list",
+      "emergency": "Emergency Plan",
+      "emergency_desc": "Disaster management and helpline desk",
+      "faqs": "Frequently Asked Questions",
+      "faqs_desc": "Resolving common queries of citizens"
+    },
+    "services": {
+      "tag": "Digital Services",
+      "title": "Citizen Services",
+      "description": "Avail all services online from the comfort of your home. Simple, fast, and secure.",
+      "all_services": "All Services List",
+      "all_services_desc": "Consolidated list of all available citizen services",
+      "tax": "Pay Property Tax",
+      "tax_desc": "Property tax payment and receipt search",
+      "water": "Pay Water Bill",
+      "water_desc": "Water bill check and online payment",
+      "complaint_desc": "File new complaint without logging in",
+      "track_desc": "Track status of registered complaint",
+      "certificates": "Certificate Services",
+      "certificates_desc": "Birth, death, and marriage certificate copies",
+      "legend": "🔒 Citizen Login is required for marked services"
+    },
+    "officials": {
+      "tag": "Our Leadership",
+      "title": "Municipal Officials",
+      "description": "Leadership determining and executing the policies for city development."
+    },
+    "news": {
+      "tag": "Updates",
+      "title": "Latest News & Announcements",
+      "description": "Important announcements, decisions, and updates from the corporation."
+    },
+    "social": {
+      "tag": "Social Media",
+      "title": "Connect on Social Media",
+      "description": "Get direct updates from our Facebook, Instagram, and YouTube channels."
+    },
+    "quick_links": {
+      "tag": "Important Links",
+      "title": "Quick Links",
+      "description": "Other important government portals and information archives."
+    }
+  },
+  "footer": {
+    "about_title": "Chhatrapati Sambhajinagar",
+    "about_sub": "Municipal Corporation",
+    "about_desc": "Chhatrapati Sambhajinagar Municipal Corporation is working for the development of our city and services for citizens.",
+    "links_services": "Services",
+    "links_quick": "Quick Links",
+    "links_info": "Information",
+    "links_govt": "Govt Links",
+    "visits": "Total Visits",
+    "copyright": "© 2026 Chhatrapati Sambhajinagar Municipal Corporation. All rights reserved.",
+    "developed_by": "Designed & Developed with ❤️ for Smart Cities",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "sitemap": "Sitemap",
+    "address": "Main Building, Town Hall, Behind Head Post Office, Chhatrapati Sambhaji Nagar, 431001"
+  }
+}

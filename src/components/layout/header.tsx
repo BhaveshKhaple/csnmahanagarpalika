@@ -2,73 +2,66 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Bell, ChevronDown, Home, Menu, PhoneCall, Search, X, Lock } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ChevronDown, Home, Menu, PhoneCall, Search, X, Lock } from 'lucide-react';
 
+import { useTranslation, Locale } from '@/lib/i18n/LanguageContext';
 import { ROUTES } from '@/lib/constants/routes';
 
 type NavItem = {
-  label: string;
+  labelKey: string;
   href: string;
-  description?: string;
+  descKey?: string;
   requiresLogin?: boolean;
 };
 
 type NavGroup = {
-  label: string;
+  labelKey: string;
   href?: string;
   items?: NavItem[];
 };
 
-// 6-Group Information Architecture definitions (csmc-adaptation-instructions.md §1 & §4)
+// 6-Group Information Architecture definitions using translation keys
 const navGroups: NavGroup[] = [
   {
-    label: 'मुख्यपृष्ठ',
+    labelKey: 'nav.home',
     href: ROUTES.PUBLIC.HOME,
   },
   {
-    label: 'नागरी सेवा',
+    labelKey: 'nav.services',
     href: ROUTES.PUBLIC.SERVICES.BASE,
     items: [
-      { label: 'सर्व सेवा सूची', href: ROUTES.PUBLIC.SERVICES.BASE, description: 'सर्व उपलब्ध नागरी सेवांची एकत्रित यादी' },
-      { label: 'मालमत्ता कर भरा', href: ROUTES.CITIZEN.PROPERTY_TAX, description: 'मालमत्ता कर भरणा व पावती शोध', requiresLogin: true },
-      { label: 'पाणीपट्टी बिल भरा', href: ROUTES.CITIZEN.WATER_BILLS, description: 'पाणीपट्टी बिल तपासणी व पेमेंट', requiresLogin: true },
-      { label: 'तक्रार नोंदवा (अतिथी)', href: ROUTES.PUBLIC.COMPLAINTS.NEW, description: 'लॉगिनशिवाय नवीन तक्रार नोंदणी' },
-      { label: 'तक्रार स्थिती तपासा', href: ROUTES.PUBLIC.COMPLAINTS.TRACK, description: 'नोंदवलेल्या तक्रारीचा मागोवा' },
-      { label: 'प्रमाणपत्र सेवा', href: ROUTES.CITIZEN.CERTIFICATES.BASE, description: 'जन्म, मृत्यू आणि विवाह दाखले', requiresLogin: true },
+      { labelKey: 'home.services.all_services', href: ROUTES.PUBLIC.SERVICES.BASE, descKey: 'home.services.all_services_desc' },
+      { labelKey: 'home.services.tax', href: ROUTES.CITIZEN.PROPERTY_TAX, descKey: 'home.services.tax_desc', requiresLogin: true },
+      { labelKey: 'home.services.water', href: ROUTES.CITIZEN.WATER_BILLS, descKey: 'home.services.water_desc', requiresLogin: true },
+      { labelKey: 'common.guest_complaint', href: ROUTES.PUBLIC.COMPLAINTS.NEW, descKey: 'home.services.complaint_desc' },
+      { labelKey: 'common.track_complaint', href: ROUTES.PUBLIC.COMPLAINTS.TRACK, descKey: 'home.services.track_desc' },
+      { labelKey: 'home.services.certificates', href: ROUTES.CITIZEN.CERTIFICATES.BASE, descKey: 'home.services.certificates_desc', requiresLogin: true },
     ],
   },
   {
-    label: 'महानगरपालिकेविषयी',
+    labelKey: 'nav.about',
     href: ROUTES.PUBLIC.ABOUT.BASE,
     items: [
-      { label: 'संस्थेबद्दल', href: ROUTES.PUBLIC.ABOUT.BASE, description: 'महानगरपालिकेची पार्श्वभूमी व इतिहास' },
-      { label: 'दृष्टी व ध्येय', href: ROUTES.PUBLIC.ABOUT.MISSION, description: 'स्मार्ट सिटी दृष्टी आणि ध्येय' },
-      { label: 'निवडून आलेले प्रतिनिधी', href: ROUTES.PUBLIC.ABOUT.OFFICIALS, description: 'महापौर, आयुक्त व पदाधिकारी सूची' },
-      { label: 'आपत्कालीन योजना', href: ROUTES.PUBLIC.ABOUT.EMERGENCY_PLAN, description: 'आपत्ती व्यवस्थापन व मदत कक्ष' },
-      { label: 'वारंवार विचारले जाणारे प्रश्न', href: ROUTES.PUBLIC.ABOUT.FAQS, description: 'नागरिकांच्या सामान्य शंकांचे निरसन' },
+      { labelKey: 'home.about.about_csmc', href: ROUTES.PUBLIC.ABOUT.BASE, descKey: 'home.about.about_desc' },
+      { labelKey: 'home.about.mission', href: ROUTES.PUBLIC.ABOUT.MISSION, descKey: 'home.about.mission_desc' },
+      { labelKey: 'home.about.officials', href: ROUTES.PUBLIC.ABOUT.OFFICIALS, descKey: 'home.about.officials_desc' },
+      { labelKey: 'home.about.emergency', href: ROUTES.PUBLIC.ABOUT.EMERGENCY_PLAN, descKey: 'home.about.emergency_desc' },
+      { labelKey: 'home.about.faqs', href: ROUTES.PUBLIC.ABOUT.FAQS, descKey: 'home.about.faqs_desc' },
     ],
   },
   {
-    label: 'निविदा व भरती',
+    labelKey: 'nav.tenders',
     href: ROUTES.PUBLIC.TENDERS,
   },
   {
-    label: 'कागदपत्रे व माहिती',
+    labelKey: 'nav.documents',
     href: ROUTES.PUBLIC.DOCUMENTS,
   },
   {
-    label: 'संपर्क',
+    labelKey: 'nav.contact',
     href: ROUTES.PUBLIC.CONTACT,
   },
-];
-
-const quickActionLinks = [
-  { label: 'तक्रार नोंदवा (अतिथी)', href: ROUTES.PUBLIC.COMPLAINTS.NEW },
-  { label: 'तक्रार स्थिती तपासा', href: ROUTES.PUBLIC.COMPLAINTS.TRACK },
-  { label: 'मालमत्ता कर भरा', href: ROUTES.CITIZEN.PROPERTY_TAX },
-  { label: 'पाणीपट्टी बिल', href: ROUTES.CITIZEN.WATER_BILLS },
-  { label: 'सर्व सेवा सूची', href: ROUTES.PUBLIC.SERVICES.BASE },
 ];
 
 export default function Header() {
@@ -79,10 +72,9 @@ export default function Header() {
   
   const desktopNavRef = React.useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const router = useRouter();
 
-  // Determine current locale from pathname
-  const currentLocale = pathname.startsWith('/en') ? 'en' : pathname.startsWith('/hi') ? 'hi' : 'mr';
+  // Get locale, setLocale and translator from i18n Context
+  const { locale, setLocale, t } = useTranslation();
 
   // Apply font size stylesheet rule on root element
   const applyFontSize = (size: 'small' | 'normal' | 'large') => {
@@ -110,26 +102,8 @@ export default function Header() {
     applyFontSize(size);
   };
 
-  // Toggle locale using Next.js routing and existing middleware compatibility
   const toggleLanguage = () => {
-    const nextLocale = currentLocale === 'mr' ? 'en' : 'mr';
-    const isEn = pathname.startsWith('/en');
-    const isHi = pathname.startsWith('/hi');
-    const isMr = pathname.startsWith('/mr');
-
-    let newPathname = pathname;
-    if (isEn) {
-      newPathname = pathname.replace(/^\/en/, nextLocale === 'mr' ? '' : '/en');
-    } else if (isHi) {
-      newPathname = pathname.replace(/^\/hi/, nextLocale === 'mr' ? '' : '/hi');
-    } else if (isMr) {
-      newPathname = pathname.replace(/^\/mr/, nextLocale === 'mr' ? '' : '/mr');
-    } else {
-      newPathname = nextLocale === 'mr' ? pathname : `/en${pathname}`;
-    }
-
-    if (newPathname === '') newPathname = '/';
-    router.push(newPathname);
+    setLocale(locale === 'mr' ? 'en' : 'mr');
   };
 
   const closeMenu = () => {
@@ -188,10 +162,10 @@ export default function Header() {
     return false;
   };
 
-  const toggleMobileSection = (label: string) => {
+  const toggleMobileSection = (labelKey: string) => {
     setOpenMobileSections((prev) => ({
       ...prev,
-      [label]: !prev[label],
+      [labelKey]: !prev[labelKey],
     }));
   };
 
@@ -202,7 +176,7 @@ export default function Header() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:m-2 focus:bg-amber-600 focus:text-white focus:px-4 focus:py-2.5 focus:rounded-lg focus:font-bold focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
       >
-        मुख्य मजकुराकडे जा (Skip to Content)
+        {locale === 'mr' ? 'मुख्य मजकुराकडे जा (Skip to Content)' : 'Skip to main content'}
       </a>
 
       <header className="sticky top-0 z-50 border-b border-zinc-700 bg-zinc-900 text-zinc-100 shadow-lg backdrop-blur-md">
@@ -211,7 +185,9 @@ export default function Header() {
           <div className="container-custom flex items-center justify-between gap-4 py-2 text-xs sm:text-sm">
             <div className="flex min-w-0 items-center gap-3 text-zinc-200">
               <PhoneCall className="h-3.5 w-3.5 text-amber-300 flex-shrink-0" />
-              <span className="truncate">हेल्पलाइन: 1800-000-000 | सोमवार-शनिवार, 10am-6pm</span>
+              <span className="truncate">
+                {t('nav.helpline')}: 1800-000-000 | {locale === 'mr' ? 'सोमवार-शनिवार, 10am-6pm' : 'Mon-Sat, 10am-6pm'}
+              </span>
             </div>
             
             {/* Font & Language Controls — Visible on every breakpoint */}
@@ -251,9 +227,9 @@ export default function Header() {
                 type="button"
                 onClick={toggleLanguage}
                 className="inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-1 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
-                aria-label={currentLocale === 'mr' ? 'Switch to English' : 'मराठीत भाषा बदला'}
+                aria-label={locale === 'mr' ? 'Switch to English' : 'मराठीत भाषा बदला'}
               >
-                {currentLocale === 'mr' ? 'English' : 'मराठी'}
+                {locale === 'mr' ? 'English' : 'मराठी'}
               </button>
             </div>
           </div>
@@ -264,9 +240,9 @@ export default function Header() {
           <div className="container-custom flex items-center justify-between gap-4 py-3">
             <div className="min-w-0">
               <Link href={ROUTES.PUBLIC.HOME} className="block text-sm font-semibold text-white sm:text-base hover:text-amber-400 transition-colors">
-                छत्रपती संभाजीनगर महानगरपालिका
+                {t('home.hero.title')}
               </Link>
-              <p className="hidden text-xs text-zinc-300 sm:block">स्मार्ट नागरी सेवा पोर्टल (CSMC)</p>
+              <p className="hidden text-xs text-zinc-300 sm:block">{t('home.hero.subtitle')}</p>
             </div>
 
             {/* CTAs next to login */}
@@ -276,29 +252,29 @@ export default function Header() {
                 href={ROUTES.PUBLIC.COMPLAINTS.NEW}
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 px-3.5 py-1.5 text-sm font-semibold text-zinc-100 transition hover:bg-zinc-700 hover:text-white hover:border-zinc-500 min-h-[40px]"
               >
-                તકરાર नोंदवा (अतिथी)
+                {t('common.guest_complaint')}
               </Link>
 
               <Link
-                href={ROUTES.SERVICES}
+                href={ROUTES.PUBLIC.SERVICES.BASE}
                 className="hidden lg:inline-flex items-center gap-2 rounded-lg border border-zinc-700 px-3 py-1.5 text-sm text-zinc-200 transition hover:border-zinc-500 hover:text-white min-h-[40px]"
               >
                 <Search className="h-4 w-4" />
-                सेवा शोधा
+                {t('nav.search')}
               </Link>
 
               <Link
                 href={ROUTES.LOGIN}
                 className="inline-flex items-center justify-center rounded-lg font-semibold bg-amber-600 text-white hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 shadow-md min-h-[38px] px-3.5 text-sm shrink-0"
               >
-                नागरिक लॉगिन
+                {t('common.login')}
               </Link>
 
               {/* Mobile Drawer Trigger — Min 44x44px target (REQ-PER-03) */}
               <button
                 type="button"
                 className="inline-flex items-center justify-center rounded-lg border border-zinc-700 p-2.5 text-zinc-100 lg:hidden min-h-[44px] min-w-[44px] hover:bg-zinc-800 transition"
-                aria-label="Open mobile navigation menu"
+                aria-label={t('nav.menu')}
                 aria-expanded={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen(true)}
               >
@@ -319,7 +295,7 @@ export default function Header() {
                 if (!hasSubItems) {
                   return (
                     <Link
-                      key={group.label}
+                      key={group.labelKey}
                       href={group.href!}
                       className={`inline-flex items-center rounded-lg px-3.5 py-2 text-sm font-medium transition ${
                         active
@@ -327,22 +303,22 @@ export default function Header() {
                           : 'text-zinc-200 hover:bg-zinc-800 hover:text-white'
                       }`}
                     >
-                      {group.label === 'मुख्यपृष्ठ' ? (
-                        <Home className="h-4 w-4 shrink-0" aria-label="मुख्यपृष्ठ" />
+                      {group.labelKey === 'nav.home' ? (
+                        <Home className="h-4 w-4 shrink-0" aria-label={t('nav.home')} />
                       ) : (
-                        group.label
+                        t(group.labelKey)
                       )}
                     </Link>
                   );
                 }
 
-                const isMenuOpen = openDesktopMenu === group.label;
+                const isMenuOpen = openDesktopMenu === group.labelKey;
 
                 return (
                   <div
-                    key={group.label}
+                    key={group.labelKey}
                     className="relative"
-                    onMouseEnter={() => setOpenDesktopMenu(group.label)}
+                    onMouseEnter={() => setOpenDesktopMenu(group.labelKey)}
                     onMouseLeave={() => setOpenDesktopMenu(null)}
                   >
                     <button
@@ -353,9 +329,9 @@ export default function Header() {
                           : 'text-zinc-200 hover:bg-zinc-800 hover:text-white'
                       }`}
                       aria-expanded={isMenuOpen}
-                      onClick={() => setOpenDesktopMenu((prev) => (prev === group.label ? null : group.label))}
+                      onClick={() => setOpenDesktopMenu((prev) => (prev === group.labelKey ? null : group.labelKey))}
                     >
-                      <span>{group.label}</span>
+                      <span>{t(group.labelKey)}</span>
                       <ChevronDown
                         className={`h-3.5 w-3.5 transition-transform duration-200 ${isMenuOpen ? 'rotate-180 text-zinc-200' : 'text-zinc-400 group-hover:text-zinc-200'}`}
                       />
@@ -366,7 +342,7 @@ export default function Header() {
                         <div className="grid grid-cols-2 gap-2">
                           {group.items?.map((item) => (
                             <Link
-                              key={item.label}
+                              key={item.labelKey}
                               href={item.href}
                               className={`rounded-lg border p-3 transition flex flex-col justify-between ${
                                 isActiveLink(item.href)
@@ -376,13 +352,13 @@ export default function Header() {
                             >
                               <div>
                                 <span className="flex items-center gap-1.5 text-sm font-medium">
-                                  {item.label}
+                                  {t(item.labelKey)}
                                   {item.requiresLogin && (
-                                    <Lock size={10} className="text-amber-400" aria-label="लॉगिन आवश्यक" />
+                                    <Lock size={10} className="text-amber-400" aria-label={locale === 'mr' ? 'लॉगिन आवश्यक' : 'Login Required'} />
                                   )}
                                 </span>
-                                {item.description && (
-                                  <p className="mt-1 text-xs text-zinc-400 leading-normal">{item.description}</p>
+                                {item.descKey && (
+                                  <p className="mt-1 text-xs text-zinc-400 leading-normal">{t(item.descKey)}</p>
                                 )}
                               </div>
                             </Link>
@@ -394,21 +370,6 @@ export default function Header() {
                 );
               })}
             </nav>
-          </div>
-        </div>
-
-        {/* Quick actions ticker bar (desktop/tablet) */}
-        <div className="hidden border-t border-zinc-800 bg-zinc-950/50 lg:block">
-          <div className="container-custom flex items-center gap-2 overflow-x-auto py-2">
-            {quickActionLinks.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="whitespace-nowrap rounded-md border border-zinc-800 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-amber-500 hover:bg-zinc-800 hover:text-white"
-              >
-                {item.label}
-              </Link>
-            ))}
           </div>
         </div>
 
@@ -435,12 +396,12 @@ export default function Header() {
             <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
               <div>
                 <p className="text-xs font-semibold tracking-[0.25em] text-amber-400 uppercase">CSMC Menu</p>
-                <p className="text-sm text-zinc-300">नागरी सेवा नेव्हिगेशन</p>
+                <p className="text-sm text-zinc-300">{t('nav.menu')}</p>
               </div>
               <button
                 type="button"
                 className="rounded-lg border border-zinc-800 p-2.5 text-zinc-200 min-h-[44px] min-w-[44px] hover:bg-zinc-800 transition"
-                aria-label="Close mobile menu"
+                aria-label={t('nav.close')}
                 onClick={closeMenu}
               >
                 <X className="h-5 w-5" />
@@ -455,14 +416,14 @@ export default function Header() {
                   className="block rounded-lg bg-orange-600 py-3 text-center font-bold text-white transition hover:bg-orange-500 shadow"
                   onClick={closeMenu}
                 >
-                  तक्रार नोंदवा (लॉगिनशिवाय)
+                  {t('common.guest_complaint')}
                 </Link>
                 <Link
                   href={ROUTES.LOGIN}
                   className="block rounded-lg bg-amber-600 py-3 text-center font-bold text-white transition hover:bg-amber-500 shadow"
                   onClick={closeMenu}
                 >
-                  नागरिक लॉगिन
+                  {t('common.login')}
                 </Link>
               </div>
 
@@ -473,7 +434,7 @@ export default function Header() {
                   if (!hasSubItems) {
                     return (
                       <Link
-                        key={group.label}
+                        key={group.labelKey}
                         href={group.href!}
                         className={`flex items-center gap-2 rounded-lg border border-zinc-800 px-4 py-3 text-sm font-medium ${
                           isActiveLink(group.href!)
@@ -482,29 +443,29 @@ export default function Header() {
                         }`}
                         onClick={closeMenu}
                       >
-                        {group.label === 'मुख्यपृष्ठ' ? (
+                        {group.labelKey === 'nav.home' ? (
                           <>
                             <Home className="h-4 w-4 text-zinc-400" />
-                            <span>मुख्यपृष्ठ (Home)</span>
+                            <span>{t('nav.home')}</span>
                           </>
                         ) : (
-                          group.label
+                          t(group.labelKey)
                         )}
                       </Link>
                     );
                   }
 
-                  const isSectionOpen = Boolean(openMobileSections[group.label]);
+                  const isSectionOpen = Boolean(openMobileSections[group.labelKey]);
 
                   return (
-                    <div key={group.label} className="rounded-lg border border-zinc-800 bg-zinc-950/20">
+                    <div key={group.labelKey} className="rounded-lg border border-zinc-800 bg-zinc-950/20">
                       <button
                         type="button"
                         className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-zinc-100 hover:bg-zinc-800/40"
-                        onClick={() => toggleMobileSection(group.label)}
+                        onClick={() => toggleMobileSection(group.labelKey)}
                         aria-expanded={isSectionOpen}
                       >
-                        <span>{group.label}</span>
+                        <span>{t(group.labelKey)}</span>
                         <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${isSectionOpen ? 'rotate-180' : ''}`} />
                       </button>
 
@@ -512,7 +473,7 @@ export default function Header() {
                         <div className="space-y-1 border-t border-zinc-800 bg-zinc-900/40 px-2 py-2">
                           {group.items?.map((item) => (
                             <Link
-                              key={item.label}
+                              key={item.labelKey}
                               href={item.href}
                               className={`flex items-center justify-between rounded-md px-3 py-2 text-sm transition ${
                                 isActiveLink(item.href)
@@ -522,9 +483,9 @@ export default function Header() {
                               onClick={closeMenu}
                             >
                               <span className="flex items-center gap-1.5">
-                                {item.label}
+                                {t(item.labelKey)}
                                 {item.requiresLogin && (
-                                  <Lock size={10} className="text-amber-400" aria-label="लॉगिन आवश्यक" />
+                                  <Lock size={10} className="text-amber-400" aria-label={locale === 'mr' ? 'लॉगिन आवश्यक' : 'Login Required'} />
                                 )}
                               </span>
                             </Link>
@@ -534,21 +495,6 @@ export default function Header() {
                     </div>
                   );
                 })}
-              </div>
-
-              {/* Quick links footer */}
-              <div className="border-t border-zinc-800 pt-4 space-y-1.5">
-                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">महत्वाच्या लिंक्स</p>
-                {quickActionLinks.slice(2).map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="block rounded-lg px-4 py-2.5 text-sm font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition"
-                    onClick={closeMenu}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
               </div>
             </nav>
           </aside>
