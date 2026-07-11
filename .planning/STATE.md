@@ -26,8 +26,9 @@
 ## Completed Tasks
 - [x] Initial codebase mapped (STACK.md, INTEGRATIONS.md, ARCHITECTURE.md, STRUCTURE.md, CONVENTIONS.md, TESTING.md, CONCERNS.md)
 - [x] Project initialized with configuration and roadmap templates
+- [x] Docs ingested: `docs/csmc-website-redesign-spec.md` merged into REQUIREMENTS.md; no blocking conflicts (see INGEST-CONFLICTS.md)
 
 ---
 
 ## Current Plan
-- None active. Use `/gsd-discuss-phase 1` or `/gsd-plan-phase 1` to initiate Phase 1.
+- **Phase 1 discussion in progress.** Gathering context before committing to PLAN.md.
