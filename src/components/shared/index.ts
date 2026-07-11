@@ -16,6 +16,7 @@ export { NewsCard } from './news-card';
 export type { NewsCardProps } from './news-card';
 
 export { Breadcrumb } from './breadcrumb';
+export { PublicBreadcrumbBar } from './public-breadcrumb-bar';
 
 export { StatusBadge, resolveStatus } from './status-badge';
 export type { ComplaintStatus } from './status-badge';

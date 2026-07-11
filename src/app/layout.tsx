@@ -34,6 +34,22 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var size = localStorage.getItem('csmc-font-size');
+                if (size === 'small') {
+                  document.documentElement.style.fontSize = '90%';
+                } else if (size === 'large') {
+                  document.documentElement.style.fontSize = '110%';
+                } else {
+                  document.documentElement.style.fontSize = '100%';
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="font-marathi antialiased">
         {children}

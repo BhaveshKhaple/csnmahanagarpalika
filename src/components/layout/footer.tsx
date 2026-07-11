@@ -1,23 +1,24 @@
 import React from 'react';
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { ROUTES } from '@/lib/constants/routes';
 
 const footerLinks = {
   services: [
-    { label: 'मालमत्ता कर', href: '/citizen/property-tax' },
-    { label: 'पाणीपट्टी', href: '/citizen/water-bills' },
-    { label: 'तक्रार नोंदवा', href: '/citizen/complaints/new' },
-    { label: 'प्रमाणपत्रे', href: '/citizen/certificates' },
+    { label: 'मालमत्ता कर', href: ROUTES.CITIZEN.PROPERTY_TAX },
+    { label: 'पाणीपट्टी', href: ROUTES.CITIZEN.WATER_BILLS },
+    { label: 'तक्रार नोंदवा', href: ROUTES.PUBLIC.COMPLAINTS.NEW },
+    { label: 'तक्रार स्थिती तपासा', href: ROUTES.PUBLIC.COMPLAINTS.TRACK },
   ],
   quickLinks: [
-    { label: 'मुख्यपृष्ठ', href: '/' },
-    { label: 'आमच्याबद्दल', href: '/about' },
-    { label: 'सेवा', href: '/services' },
-    { label: 'संपर्क', href: '/contact' },
+    { label: 'मुख्यपृष्ठ', href: ROUTES.PUBLIC.HOME },
+    { label: 'आमच्याबद्दल', href: ROUTES.PUBLIC.ABOUT.BASE },
+    { label: 'सेवा', href: ROUTES.PUBLIC.SERVICES.BASE },
+    { label: 'संपर्क', href: ROUTES.PUBLIC.CONTACT },
   ],
   information: [
-    { label: 'RTI', href: '/rti' },
-    { label: 'FAQ', href: '/faq' },
+    { label: 'RTI', href: ROUTES.RTI },
+    { label: 'FAQ', href: ROUTES.FAQ },
     { label: 'गोपनीयता धोरण', href: '/privacy' },
     { label: 'अस्वीकरण', href: '/disclaimer' },
   ],
