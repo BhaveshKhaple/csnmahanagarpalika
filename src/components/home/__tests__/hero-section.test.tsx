@@ -45,6 +45,7 @@ describe('HeroSection', () => {
     process.cwd = jest.fn().mockReturnValue('/non-existent-path');
     
     // Require here fresh after jest.resetModules()
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const HeroSection = require('../hero-section').default;
 
     const result = await HeroSection();
@@ -58,6 +59,7 @@ describe('HeroSection', () => {
     // Mock cwd to the test-single-slider root path
     process.cwd = jest.fn().mockReturnValue(mockCwdPath);
     
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const HeroSection = require('../hero-section').default;
 
     const result = await HeroSection();
@@ -72,6 +74,7 @@ describe('HeroSection', () => {
 
   it('renders multiple slides with delays and only first having priority', async () => {
     // Let it use the original cwd containing the real slider images
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const HeroSection = require('../hero-section').default;
 
     const result = await HeroSection();
