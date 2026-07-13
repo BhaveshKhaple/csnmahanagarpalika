@@ -136,6 +136,31 @@ npm run test:coverage
 
 ---
 
+## 📅 Future Scope & Out of Scope Features (To-Do List)
+
+The following advanced capabilities and workflows from the original specification are currently out of scope for the public citizen experience redesign, but are preserved here as part of the future development backlog:
+
+### 💳 Financial & Core Integrations
+- [ ] **Live Payment Gateway Integration**: Connect client-side mock routes with a production Razorpay/bill-settlement API.
+- [ ] **Full Digital Certificate Issuance**: Auto-verify and generate secure, downloadable Birth, Death, and Marriage certificates.
+- [ ] **License Management**: Complete trade license application processing and building permission approval routing.
+- [ ] **Digital Locker Integration**: Secure third-party storage APIs for citizen document verification.
+
+### 📊 Administrative Controls
+- [ ] **GIS Mapping & Heatmaps**: Interactive maps for administrators showing real-time complaint heatmaps and regional resource allocation.
+- [ ] **Department Performance Dashboards**: Advanced KPI graphs and task latency metrics for department heads.
+- [ ] **Super Admin Panel**: Direct tenant configuration and comprehensive system audit logging.
+
+### 🤖 AI-Powered Automation
+- [ ] **Voice Assistant Integration**: Full speech-to-text navigation and service triggering on the landing page.
+- [ ] **Automated Complaint Classification**: Deep learning models (e.g., TensorFlow) to categorize incoming complaints from images/videos.
+- [ ] **Image-Based Issue Verification**: Auto-detecting potholes, waste piles, or public property damage to prevent invalid/spam complaints.
+- [ ] **Predictive Maintenance Alerts**: Early anomaly detection for municipal utility assets (e.g., water grid lines).
+- [ ] **Sentiment Analysis**: Citizen feedback and trend detection dashboard for municipal communications.
+- [ ] **OCR Document Verification**: Extracting details from uploaded bills or ID cards to auto-fill application fields.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.

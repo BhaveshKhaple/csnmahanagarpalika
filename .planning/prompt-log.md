@@ -92,3 +92,18 @@ Output summary: Rewrote README.md to highlight the redesigned Chhatrapati Sambha
 Files changed:
 - `c:\Users\yadne\Downloads\CSMC\csnmahanagarpalika\README.md`
 ---
+
+---
+Time: 13:49
+Member: USER
+Task context: Add discarded/out-of-scope features to the end of README.md as a future scope/todo list.
+Prompt given:
+```
+the previous readme features which we discarded , to be added in the last as feauture scope our to do list
+```
+Output summary: Appended a 'Future Scope & Out of Scope Features (To-Do List)' section to the end of README.md containing the advanced AI, admin dashboard, and payment integration items.
+Files changed:
+- `c:\Users\yadne\Downloads\CSMC\csnmahanagarpalika\README.md`
+- `c:\Users\yadne\Downloads\CSMC\csnmahanagarpalika\.planning\prompt-log.md`
+---
+
