@@ -33,7 +33,9 @@ service cloud.firestore {
     match /complaints/{complaintId} {
       allow read: if isAuthenticated() && 
         (resource.data.userId == request.auth.uid || isOfficer());
-      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      // Allow authenticated citizens to create their own, OR allow guests to create if they mark it as guest
+      allow create: if (isAuthenticated() && request.auth.uid == request.resource.data.userId) || 
+                       (!isAuthenticated() && request.resource.data.isGuest == true && request.resource.data.guestPhone != null);
       allow update: if isOfficer() || (isOwner(resource.data.userId) && resource.data.status == 'submitted');
       allow delete: if isAdmin();
     }

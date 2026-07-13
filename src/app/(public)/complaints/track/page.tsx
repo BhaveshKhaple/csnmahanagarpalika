@@ -13,29 +13,44 @@ import {
   AlertCircle,
   FileText,
   MessageSquare,
-  Star
+  Phone
 } from 'lucide-react';
 import Link from 'next/link';
 import { StatusBadge, statusConfig } from '@/components/shared/status-badge';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
+import { Breadcrumb } from '@/components/shared/breadcrumb';
 
-export default function TrackComplaintPage() {
+export default function PublicTrackComplaintPage() {
   const { locale } = useTranslation();
   const [complaintNumber, setComplaintNumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [complaintData, setComplaintData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  const texts = {
+    title: locale === 'mr' ? 'तक्रार ट्रॅक करा' : 'Track Complaint',
+    subtitle: locale === 'mr' ? 'तुमच्या तक्रारीची सद्यस्थिती तपासा' : 'Check the current status of your complaint',
+    searchTitle: locale === 'mr' ? 'तक्रार शोधा' : 'Search Complaint',
+    complaintId: locale === 'mr' ? 'तक्रार क्रमांक' : 'Complaint Number',
+    mobile: locale === 'mr' ? 'मोबाइल क्रमांक' : 'Mobile Number',
+    search: locale === 'mr' ? 'शोधा' : 'Search',
+    hint: locale === 'mr' 
+      ? 'तुमचा तक्रार क्रमांक तुम्हाला SMS आणि Email मधून मिळाला असेल. तक्रार नोंदवताना दिलेला मोबाइल नंबर प्रविष्ट करा.' 
+      : 'You must have received the complaint number via SMS and Email. Enter the mobile number used while filing the complaint.',
+    alertReq: locale === 'mr' ? 'कृपया तक्रार क्रमांक आणि मोबाइल नंबर प्रविष्ट करा' : 'Please enter complaint number and mobile number'
+  };
+
   const handleSearch = () => {
-    if (!complaintNumber) {
-      alert('कृपया तक्रार क्रमांक प्रविष्ट करा');
+    if (!complaintNumber || !mobileNumber) {
+      alert(texts.alertReq);
       return;
     }
 
     setLoading(true);
-    // Simulate API call
+    // Simulate API call to the new secure tracking endpoint
     setTimeout(() => {
       setComplaintData({
-        complaintNumber: complaintNumber || 'CMP/2026/45678',
+        complaintNumber: complaintNumber,
         category: 'रस्ते',
         categoryIcon: '🛣️',
         title: 'मुख्य रस्त्यावर मोठा खड्डा',
@@ -43,8 +58,9 @@ export default function TrackComplaintPage() {
         location: 'शिवाजी चौक जवळ, सेक्टर-७, छत्रपती संभाजीनगर',
         latitude: '19.8762',
         longitude: '75.3433',
-        citizenName: 'राजेश शर्मा',
-        citizenPhone: '+91-9876543210',
+        // Masked PII for public tracking
+        citizenName: 'र*** श***',
+        citizenPhone: '******' + mobileNumber.slice(-4),
         submittedDate: '15 जून 2026',
         status: 'in_progress',
         assignedTo: 'रस्ते दुरुस्ती विभाग',
@@ -53,14 +69,13 @@ export default function TrackComplaintPage() {
         estimatedResolution: '25 जून 2026',
         images: [
           'https://via.placeholder.com/300x200?text=Photo+1',
-          'https://via.placeholder.com/300x200?text=Photo+2',
         ],
         timeline: [
           {
             status: 'submitted',
             date: '15 जून 2026, 10:30 AM',
             description: 'तक्रार ऑनलाइन नोंदवली',
-            by: 'राजेश शर्मा'
+            by: 'Citizen'
           },
           {
             status: 'assigned',
@@ -80,22 +95,24 @@ export default function TrackComplaintPage() {
             date: '16 जून 2026',
             message: 'साइट व्हिजिट पूर्ण झाली. दुरुस्तीसाठी मटेरियल ऑर्डर केले आहे.',
             by: 'श्री संजय पाटील'
-          },
-          {
-            date: '15 जून 2026',
-            message: 'तुमची तक्रार मिळाली. लवकरच कारवाई होईल.',
-            by: 'System'
           }
         ]
       });
       setLoading(false);
     }, 1000);
   };
+
   const currentStatus = complaintData ? statusConfig[complaintData.status as keyof typeof statusConfig] : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container-custom max-w-5xl">
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200">
+        <div className="container-custom py-4">
+          <Breadcrumb />
+        </div>
+      </div>
+      
+      <div className="container-custom max-w-5xl py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -103,8 +120,8 @@ export default function TrackComplaintPage() {
               <Search className="text-green-600" size={24} />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">तक्रार ट्रॅक करा</h1>
-              <p className="text-gray-600">तुमच्या तक्रारीची सद्यस्थिती तपासा</p>
+              <h1 className="text-3xl font-bold text-gray-900">{texts.title}</h1>
+              <p className="text-gray-600">{texts.subtitle}</p>
             </div>
           </div>
         </div>
@@ -114,20 +131,32 @@ export default function TrackComplaintPage() {
           <CardHeader>
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Search size={20} />
-              तक्रार शोधा
+              {texts.searchTitle}
             </h2>
           </CardHeader>
           <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  तक्रार क्रमांक
+                  {texts.complaintId}
                 </label>
                 <input
                   type="text"
                   value={complaintNumber}
                   onChange={(e) => setComplaintNumber(e.target.value)}
                   placeholder="उदा: CMP/2026/45678"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {texts.mobile}
+                </label>
+                <input
+                  type="tel"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value)}
+                  placeholder="9876543210"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
@@ -139,7 +168,7 @@ export default function TrackComplaintPage() {
                   size="lg"
                 >
                   <Search size={18} className="mr-2" />
-                  शोधा
+                  {texts.search}
                 </Button>
               </div>
             </div>
@@ -147,10 +176,7 @@ export default function TrackComplaintPage() {
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-900 flex items-start gap-2">
                 <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
-                <span>
-                  तुमचा तक्रार क्रमांक तुम्हाला SMS आणि Email मधून मिळाला असेल. 
-                  तक्रार नोंदवताना दिलेला मोबाइल नंबर किंवा ईमेल तपासा.
-                </span>
+                <span>{texts.hint}</span>
               </p>
             </div>
           </CardBody>
@@ -159,12 +185,11 @@ export default function TrackComplaintPage() {
         {/* Results */}
         {complaintData && (
           <>
-            {/* Status Card */}
             <Card className="mb-6">
               <CardBody>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">तक्रार क्रमांक</p>
+                    <p className="text-sm text-gray-600 mb-1">{texts.complaintId}</p>
                     <p className="text-2xl font-bold text-gray-900">{complaintData.complaintNumber}</p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -176,16 +201,13 @@ export default function TrackComplaintPage() {
               </CardBody>
             </Card>
 
-            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - Details */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Complaint Details */}
                 <Card>
                   <CardHeader>
                     <h2 className="text-xl font-bold flex items-center gap-2">
                       <FileText size={20} />
-                      तक्रारीचे तपशील
+                      {locale === 'mr' ? 'तक्रारीचे तपशील' : 'Complaint Details'}
                     </h2>
                   </CardHeader>
                   <CardBody className="space-y-4">
@@ -207,31 +229,14 @@ export default function TrackComplaintPage() {
                         </p>
                       </div>
                     </div>
-
-                    {/* Images */}
-                    {complaintData.images && complaintData.images.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">संलग्न फोटो:</p>
-                        <div className="grid grid-cols-2 gap-4">
-                          {complaintData.images.map((img: string, index: number) => (
-                            <div key={index} className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                              <div className="absolute inset-0 flex items-center justify-center text-6xl">
-                                📷
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </CardBody>
                 </Card>
 
-                {/* Timeline */}
                 <Card>
                   <CardHeader>
                     <h2 className="text-xl font-bold flex items-center gap-2">
                       <Clock size={20} />
-                      तक्रारीचा इतिहास
+                      {locale === 'mr' ? 'तक्रारीचा इतिहास' : 'Complaint Timeline'}
                     </h2>
                   </CardHeader>
                   <CardBody>
@@ -269,91 +274,59 @@ export default function TrackComplaintPage() {
                 </Card>
               </div>
 
-              {/* Right Column - Info Cards */}
               <div className="space-y-6">
-                {/* Assignment Info */}
                 <Card>
                   <CardHeader>
                     <h3 className="font-bold flex items-center gap-2">
                       <User size={18} />
-                      विभाग माहिती
+                      {locale === 'mr' ? 'विभाग माहिती' : 'Department Info'}
                     </h3>
                   </CardHeader>
                   <CardBody className="space-y-3 text-sm">
                     <div>
-                      <p className="text-gray-600">विभाग</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'विभाग' : 'Department'}</p>
                       <p className="font-semibold text-gray-900">{complaintData.assignedTo}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">अधिकारी</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'अधिकारी' : 'Officer'}</p>
                       <p className="font-semibold text-gray-900">{complaintData.assignedOfficer}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">प्राधान्यता</p>
-                      <span className="inline-block px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-semibold">
-                        {complaintData.priority}
-                      </span>
                     </div>
                   </CardBody>
                 </Card>
 
-                {/* Dates */}
                 <Card>
                   <CardHeader>
                     <h3 className="font-bold flex items-center gap-2">
                       <Calendar size={18} />
-                      तारखा
+                      {locale === 'mr' ? 'तारखा' : 'Dates'}
                     </h3>
                   </CardHeader>
                   <CardBody className="space-y-3 text-sm">
                     <div>
-                      <p className="text-gray-600">नोंदवण्याची तारीख</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'नोंदवण्याची तारीख' : 'Submitted Date'}</p>
                       <p className="font-semibold text-gray-900">{complaintData.submittedDate}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">अपेक्षित निराकरण</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'अपेक्षित निराकरण' : 'Estimated Resolution'}</p>
                       <p className="font-semibold text-green-600">{complaintData.estimatedResolution}</p>
                     </div>
                   </CardBody>
                 </Card>
 
-                {/* Updates */}
-                <Card>
-                  <CardHeader>
-                    <h3 className="font-bold flex items-center gap-2">
-                      <MessageSquare size={18} />
-                      अपडेट्स
-                    </h3>
-                  </CardHeader>
-                  <CardBody className="space-y-4">
-                    {complaintData.updates.map((update: any, index: number) => (
-                      <div key={index} className="text-sm">
-                        <p className="text-gray-900">{update.message}</p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                          <span>{update.date}</span>
-                          <span>•</span>
-                          <span>{update.by}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </CardBody>
-                </Card>
-
-                {/* Citizen Info */}
                 <Card>
                   <CardHeader>
                     <h3 className="font-bold flex items-center gap-2">
                       <User size={18} />
-                      नागरिक माहिती
+                      {locale === 'mr' ? 'नागरिक माहिती' : 'Citizen Info'}
                     </h3>
                   </CardHeader>
                   <CardBody className="space-y-2 text-sm">
                     <div>
-                      <p className="text-gray-600">नाव</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'नाव' : 'Name'}</p>
                       <p className="font-semibold text-gray-900">{complaintData.citizenName}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">मोबाइल</p>
+                      <p className="text-gray-600">{locale === 'mr' ? 'मोबाइल' : 'Mobile'}</p>
                       <p className="font-semibold text-gray-900">{complaintData.citizenPhone}</p>
                     </div>
                   </CardBody>
@@ -361,16 +334,15 @@ export default function TrackComplaintPage() {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <Link href="/citizen/complaints/new">
+              <Link href="/complaints/new">
                 <Button variant="outline" className="w-full">
-                  नवीन तक्रार नोंदवा
+                  {locale === 'mr' ? 'नवीन तक्रार नोंदवा' : 'File New Complaint'}
                 </Button>
               </Link>
               <Button className="w-full bg-green-600 hover:bg-green-700">
                 <MessageSquare size={18} className="mr-2" />
-                मदत केंद्र
+                {locale === 'mr' ? 'मदत केंद्र' : 'Help Center'}
               </Button>
             </div>
           </>
