@@ -18,10 +18,8 @@ export type { NewsCardProps } from './news-card';
 export { Breadcrumb } from './breadcrumb';
 export { PublicBreadcrumbBar } from './public-breadcrumb-bar';
 
-export { StatusBadge, resolveStatus } from './status-badge';
-export type { ComplaintStatus } from './status-badge';
+export { StatusBadge, statusConfig } from './status-badge';
 
 export { CategorySelect } from './category-select';
-export type { ComplaintCategory } from './category-select';
 
 export { ConfirmationReceipt } from './confirmation-receipt';

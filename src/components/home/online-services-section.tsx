@@ -1,3 +1,5 @@
+'use client';
+
 import { ServiceCardGrid, type ServiceCardProps } from '@/components/shared';
 import Link from 'next/link';
 import {

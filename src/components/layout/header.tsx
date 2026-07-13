@@ -71,6 +71,8 @@ export default function Header() {
   const [fontSize, setFontSize] = React.useState<'small' | 'normal' | 'large'>('normal');
   
   const desktopNavRef = React.useRef<HTMLDivElement | null>(null);
+  // Timer ref for debounced menu close — prevents gap between button & panel from flickering
+  const closeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
   // Get locale, setLocale and translator from i18n Context
@@ -318,8 +320,15 @@ export default function Header() {
                   <div
                     key={group.labelKey}
                     className="relative"
-                    onMouseEnter={() => setOpenDesktopMenu(group.labelKey)}
-                    onMouseLeave={() => setOpenDesktopMenu(null)}
+                    onMouseEnter={() => {
+                      // Cancel any pending close and open this menu
+                      if (closeTimer.current) clearTimeout(closeTimer.current);
+                      setOpenDesktopMenu(group.labelKey);
+                    }}
+                    onMouseLeave={() => {
+                      // Debounce close so mouse can travel across the gap to the panel
+                      closeTimer.current = setTimeout(() => setOpenDesktopMenu(null), 120);
+                    }}
                   >
                     <button
                       type="button"
@@ -329,7 +338,10 @@ export default function Header() {
                           : 'text-zinc-200 hover:bg-zinc-800 hover:text-white'
                       }`}
                       aria-expanded={isMenuOpen}
-                      onClick={() => setOpenDesktopMenu((prev) => (prev === group.labelKey ? null : group.labelKey))}
+                      onClick={() => {
+                        if (closeTimer.current) clearTimeout(closeTimer.current);
+                        setOpenDesktopMenu((prev) => (prev === group.labelKey ? null : group.labelKey));
+                      }}
                     >
                       <span>{t(group.labelKey)}</span>
                       <ChevronDown
@@ -338,31 +350,44 @@ export default function Header() {
                     </button>
 
                     {isMenuOpen && (
-                      <div className="absolute left-0 top-full mt-1.5 w-[34rem] rounded-xl border border-zinc-700 bg-zinc-900 p-3 shadow-2xl animate-fade-in z-50">
-                        <div className="grid grid-cols-2 gap-2">
-                          {group.items?.map((item) => (
-                            <Link
-                              key={item.labelKey}
-                              href={item.href}
-                              className={`rounded-lg border p-3 transition flex flex-col justify-between ${
-                                isActiveLink(item.href)
-                                  ? 'border-amber-500 bg-zinc-800/80 text-white'
-                                  : 'border-zinc-800 text-zinc-100 hover:border-zinc-600 hover:bg-zinc-800/50'
-                              }`}
-                            >
-                              <div>
-                                <span className="flex items-center gap-1.5 text-sm font-medium">
-                                  {t(item.labelKey)}
-                                  {item.requiresLogin && (
-                                    <Lock size={10} className="text-amber-400" aria-label={locale === 'mr' ? 'लॉगिन आवश्यक' : 'Login Required'} />
+                      <div
+                        className="absolute left-0 top-full w-[34rem] z-50"
+                        onMouseEnter={() => {
+                          // Mouse entered the panel — cancel any pending close
+                          if (closeTimer.current) clearTimeout(closeTimer.current);
+                        }}
+                        onMouseLeave={() => {
+                          closeTimer.current = setTimeout(() => setOpenDesktopMenu(null), 120);
+                        }}
+                      >
+                        {/* Transparent bridge that fills the gap so mouse never "leaves" the zone */}
+                        <div className="h-2 w-full" />
+                        <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-3 shadow-2xl animate-fade-in">
+                          <div className="grid grid-cols-2 gap-2">
+                            {group.items?.map((item) => (
+                              <Link
+                                key={item.labelKey}
+                                href={item.href}
+                                className={`rounded-lg border p-3 transition flex flex-col justify-between ${
+                                  isActiveLink(item.href)
+                                    ? 'border-amber-500 bg-zinc-800/80 text-white'
+                                    : 'border-zinc-800 text-zinc-100 hover:border-zinc-600 hover:bg-zinc-800/50'
+                                }`}
+                              >
+                                <div>
+                                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                                    {t(item.labelKey)}
+                                    {item.requiresLogin && (
+                                      <Lock size={10} className="text-amber-400" aria-label={locale === 'mr' ? 'लॉगिन आवश्यक' : 'Login Required'} />
+                                    )}
+                                  </span>
+                                  {item.descKey && (
+                                    <p className="mt-1 text-xs text-zinc-400 leading-normal">{t(item.descKey)}</p>
                                   )}
-                                </span>
-                                {item.descKey && (
-                                  <p className="mt-1 text-xs text-zinc-400 leading-normal">{t(item.descKey)}</p>
-                                )}
-                              </div>
-                            </Link>
-                          ))}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}

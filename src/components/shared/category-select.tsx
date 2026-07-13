@@ -1,131 +1,49 @@
 'use client';
 
-import { Droplet, MapPin, Trash2, Lightbulb, HelpCircle, type LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
+import React from 'react';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
-export type ComplaintCategory =
-  | 'water'
-  | 'road'
-  | 'sanitation'
-  | 'streetlight'
-  | 'other';
-
-const CATEGORIES: Record<
-  ComplaintCategory,
-  { labelMr: string; labelEn: string; icon: LucideIcon; color: string; bg: string }
-> = {
-  water: {
-    labelMr: 'पाणी',
-    labelEn: 'Water',
-    icon: Droplet,
-    color: 'text-blue-600',
-    bg: 'bg-blue-50 border-blue-200 hover:bg-blue-100',
-  },
-  road: {
-    labelMr: 'रस्ता',
-    labelEn: 'Road',
-    icon: MapPin,
-    color: 'text-orange-600',
-    bg: 'bg-orange-50 border-orange-200 hover:bg-orange-100',
-  },
-  sanitation: {
-    labelMr: 'स्वच्छता',
-    labelEn: 'Sanitation',
-    icon: Trash2,
-    color: 'text-green-600',
-    bg: 'bg-green-50 border-green-200 hover:bg-green-100',
-  },
-  streetlight: {
-    labelMr: 'दिवाबत्ती',
-    labelEn: 'Streetlight',
-    icon: Lightbulb,
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100',
-  },
-  other: {
-    labelMr: 'इतर',
-    labelEn: 'Other',
-    icon: HelpCircle,
-    color: 'text-gray-600',
-    bg: 'bg-gray-50 border-gray-200 hover:bg-gray-100',
-  },
-};
+export const complaintCategories = [
+  { id: 'roads', label: { mr: 'रस्ते', en: 'Roads' }, icon: '🛣️', color: 'bg-orange-100 text-orange-600' },
+  { id: 'water', label: { mr: 'पाणी', en: 'Water' }, icon: '💧', color: 'bg-blue-100 text-blue-600' },
+  { id: 'garbage', label: { mr: 'कचरा', en: 'Garbage' }, icon: '🗑️', color: 'bg-green-100 text-green-600' },
+  { id: 'drainage', label: { mr: 'ड्रेनेज', en: 'Drainage' }, icon: '🚰', color: 'bg-purple-100 text-purple-600' },
+  { id: 'street_lights', label: { mr: 'स्ट्रीट लाइट', en: 'Street Lights' }, icon: '💡', color: 'bg-yellow-100 text-yellow-600' },
+  { id: 'public_health', label: { mr: 'सार्वजनिक आरोग्य', en: 'Public Health' }, icon: '🏥', color: 'bg-red-100 text-red-600' },
+  { id: 'trees', label: { mr: 'झाडे', en: 'Trees' }, icon: '🌳', color: 'bg-emerald-100 text-emerald-600' },
+  { id: 'animals', label: { mr: 'प्राणी', en: 'Animals' }, icon: '🐕', color: 'bg-amber-100 text-amber-600' },
+  { id: 'illegal_construction', label: { mr: 'बेकायदेशीर बांधकाम', en: 'Illegal Construction' }, icon: '🏗️', color: 'bg-rose-100 text-rose-600' },
+  { id: 'noise', label: { mr: 'आवाज प्रदूषण', en: 'Noise Pollution' }, icon: '📢', color: 'bg-indigo-100 text-indigo-600' },
+  { id: 'other', label: { mr: 'इतर', en: 'Other' }, icon: '📋', color: 'bg-gray-100 text-gray-600' },
+];
 
 interface CategorySelectProps {
-  value: ComplaintCategory | null;
-  onChange: (value: ComplaintCategory) => void;
-  /** Error message in Marathi */
-  error?: string;
-  className?: string;
+  selectedCategory: string;
+  onSelect: (categoryId: string) => void;
 }
 
-/**
- * CategorySelect — icon-based complaint category picker.
- *
- * Spec: "Category selection uses icons (water/road/sanitation/streetlight/other)"
- * — csmc-adaptation-instructions.md §3
- *
- * Uses radio-group semantics for keyboard navigation and screen reader support.
- * Min 44x44px touch targets (REQ-PER-03).
- */
-export function CategorySelect({ value, onChange, error, className }: CategorySelectProps) {
+export function CategorySelect({ selectedCategory, onSelect }: CategorySelectProps) {
+  const { locale } = useTranslation();
+
   return (
-    <fieldset className={cn('space-y-2', className)}>
-      <legend className="text-sm font-medium text-gray-900">
-        तक्रारीचा प्रकार निवडा{' '}
-        <span className="text-xs font-normal text-gray-400">(Select Category)</span>
-        <span className="text-red-500 ml-1" aria-hidden>*</span>
-      </legend>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2" role="radiogroup" aria-required="true">
-        {(Object.entries(CATEGORIES) as [ComplaintCategory, typeof CATEGORIES[ComplaintCategory]][]).map(
-          ([key, cat]) => {
-            const Icon = cat.icon;
-            const isSelected = value === key;
-
-            return (
-              <label
-                key={key}
-                className={cn(
-                  'flex min-h-[44px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 select-none',
-                  isSelected
-                    ? `border-current ${cat.color} ${cat.bg.split(' ')[0]} ring-2 ring-current ring-offset-1`
-                    : `border-gray-200 ${cat.bg}`,
-                )}
-              >
-                <input
-                  type="radio"
-                  name="complaint-category"
-                  value={key}
-                  checked={isSelected}
-                  onChange={() => onChange(key)}
-                  className="sr-only"
-                  aria-label={`${cat.labelMr} — ${cat.labelEn}`}
-                />
-                <Icon
-                  size={20}
-                  className={cn('transition-colors', isSelected ? cat.color : 'text-gray-400')}
-                  aria-hidden
-                />
-                <div>
-                  <p className={cn('text-xs font-semibold leading-tight', isSelected ? cat.color : 'text-gray-700')}>
-                    {cat.labelMr}
-                  </p>
-                  <p className={cn('text-[10px] leading-tight', isSelected ? `${cat.color} opacity-70` : 'text-gray-400')}>
-                    {cat.labelEn}
-                  </p>
-                </div>
-              </label>
-            );
-          }
-        )}
-      </div>
-
-      {error && (
-        <p role="alert" className="text-xs text-red-600 flex items-center gap-1 mt-1">
-          <span aria-hidden>⚠</span> {error}
-        </p>
-      )}
-    </fieldset>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      {complaintCategories.map((category) => (
+        <button
+          key={category.id}
+          type="button"
+          onClick={() => onSelect(category.id)}
+          className={`p-4 rounded-lg border-2 transition-all ${
+            selectedCategory === category.id
+              ? 'border-orange-500 bg-orange-50 shadow-md scale-105'
+              : 'border-gray-200 hover:border-orange-300 hover:shadow'
+          }`}
+        >
+          <div className="text-3xl mb-2">{category.icon}</div>
+          <div className="text-sm font-medium text-gray-900">
+            {locale === 'mr' ? category.label.mr : category.label.en}
+          </div>
+        </button>
+      ))}
+    </div>
   );
 }

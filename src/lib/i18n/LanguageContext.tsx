@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import en from './dictionaries/en.json';
 import mr from './dictionaries/mr.json';
 
@@ -48,40 +48,32 @@ function getNestedValue(obj: any, path: string): string {
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [locale, setLocaleState] = useState<Locale>('mr');
   const pathname = usePathname();
-  const router = useRouter();
 
-  // 1. Detect locale from pathname (Next.js routing source-of-truth)
+  // 1. Detect locale from pathname first; fall back to localStorage for
+  //    bare-path subpages (e.g. /about, /services) that have no /en prefix.
+  //    This ensures the user's chosen language persists on all subpages.
   useEffect(() => {
-    const isEn = pathname.startsWith('/en');
-    const detectedLocale: Locale = isEn ? 'en' : 'mr';
-    setLocaleState(detectedLocale);
+    if (pathname.startsWith('/en')) {
+      setLocaleState('en');
+    } else if (pathname.startsWith('/hi')) {
+      setLocaleState('hi' as Locale);
+    } else {
+      // No locale prefix — respect what the user last explicitly chose
+      const saved = (typeof window !== 'undefined'
+        ? localStorage.getItem('csmc-locale')
+        : null) as Locale | null;
+      setLocaleState(saved === 'en' ? 'en' : 'mr');
+    }
   }, [pathname]);
 
-  // 2. Wrap locale updater to synchronize pathname
+  // 2. Update locale state and persist to localStorage.
+  // No URL navigation is needed — all subpages (/about, /services, etc.) are
+  // locale-neutral bare paths. The useEffect above reads localStorage on every
+  // route change, so the correct language is applied everywhere automatically.
   const setLocale = (newLocale: Locale) => {
     if (newLocale === locale) return;
-
     setLocaleState(newLocale);
     localStorage.setItem('csmc-locale', newLocale);
-
-    // Synchronize URL paths to match the locale choice
-    const isEn = pathname.startsWith('/en');
-    const isHi = pathname.startsWith('/hi');
-    const isMr = pathname.startsWith('/mr');
-
-    let newPathname = pathname;
-    if (isEn) {
-      newPathname = pathname.replace(/^\/en/, newLocale === 'mr' ? '' : '/en');
-    } else if (isHi) {
-      newPathname = pathname.replace(/^\/hi/, newLocale === 'mr' ? '' : '/hi');
-    } else if (isMr) {
-      newPathname = pathname.replace(/^\/mr/, newLocale === 'mr' ? '' : '/mr');
-    } else {
-      newPathname = newLocale === 'mr' ? pathname : `/en${pathname}`;
-    }
-
-    if (newPathname === '') newPathname = '/';
-    router.push(newPathname);
   };
 
   const t = (key: string) => {

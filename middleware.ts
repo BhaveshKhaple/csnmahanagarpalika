@@ -1,21 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const LOCALES = ['en', 'mr', 'hi'];
+const LOCALES = ['en', 'mr', 'hi'] as const;
+type Locale = (typeof LOCALES)[number];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const localeMatch = pathname.match(/^\/(en|mr|hi)(\/.*)?$/);
+  // If the path already starts with a valid locale prefix, pass it through.
+  // Do NOT redirect/strip — LanguageContext relies on the /en prefix being
+  // present in the URL to detect the active locale client-side.
+  const hasLocalePrefix = LOCALES.some(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+  );
 
-  if (!localeMatch) {
+  if (hasLocalePrefix) {
     return NextResponse.next();
   }
 
-  const localizedPath = localeMatch[2] || '/';
-  const redirectUrl = request.nextUrl.clone();
-  redirectUrl.pathname = localizedPath;
-
-  return NextResponse.redirect(redirectUrl);
+  // No locale prefix → default language (Marathi), just continue.
+  return NextResponse.next();
 }
 
 export const config = {

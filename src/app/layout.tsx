@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Noto_Sans_Devanagari } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
@@ -8,6 +8,13 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+});
+
+const notoSansDevanagari = Noto_Sans_Devanagari({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['devanagari'],
+  display: 'swap',
+  variable: '--font-noto-sans-devanagari',
 });
 
 export const metadata: Metadata = {
@@ -29,12 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="mr" className={inter.variable}>
+    <html lang="mr" className={`${inter.variable} ${notoSansDevanagari.variable}`}>
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

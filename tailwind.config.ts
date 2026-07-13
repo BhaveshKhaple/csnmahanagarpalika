@@ -54,8 +54,19 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
-        marathi: ['Noto Sans Devanagari', 'sans-serif'],
+        sans: ['var(--font-inter)', 'var(--font-noto-sans-devanagari)', 'system-ui', 'sans-serif'],
+        marathi: ['var(--font-noto-sans-devanagari)', 'sans-serif'],
+      },
+      fontSize: {
+        xs: 'clamp(0.75rem, 0.7vw + 0.5rem, 0.875rem)',
+        sm: 'clamp(0.875rem, 0.8vw + 0.6rem, 1rem)',
+        base: 'clamp(1rem, 1vw + 0.75rem, 1.125rem)',
+        lg: 'clamp(1.125rem, 1.2vw + 0.8rem, 1.25rem)',
+        xl: 'clamp(1.25rem, 1.5vw + 0.9rem, 1.5rem)',
+        '2xl': 'clamp(1.5rem, 2vw + 1rem, 1.875rem)',
+        '3xl': 'clamp(1.875rem, 2.5vw + 1.25rem, 2.25rem)',
+        '4xl': 'clamp(2.25rem, 3vw + 1.5rem, 3rem)',
+        '5xl': 'clamp(3rem, 4vw + 2rem, 4rem)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
